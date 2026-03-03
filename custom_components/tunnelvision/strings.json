@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to TunnelVision",
+        "description": "Enter the connection details for your TunnelVision container.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "api_key": "API Key (leave blank if not set)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to TunnelVision API",
+      "invalid_auth": "Invalid API key"
+    },
+    "abort": {
+      "already_configured": "This TunnelVision instance is already configured"
+    }
+  }
+}

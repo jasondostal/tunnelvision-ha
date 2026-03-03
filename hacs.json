@@ -1,0 +1,6 @@
+{
+  "name": "TunnelVision",
+  "domains": ["tunnelvision"],
+  "homeassistant": "2024.1.0",
+  "iot_class": "local_polling"
+}

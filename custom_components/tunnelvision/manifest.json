@@ -1,0 +1,13 @@
+{
+  "domain": "tunnelvision",
+  "name": "TunnelVision",
+  "codeowners": ["@jasondostal"],
+  "config_flow": true,
+  "documentation": "https://github.com/jasondostal/tunnelvision-ha",
+  "integration_type": "hub",
+  "iot_class": "local_polling",
+  "requirements": ["aiohttp>=3.8.1"],
+  "version": "0.1.0",
+  "issue_tracker": "https://github.com/jasondostal/tunnelvision-ha/issues",
+  "homeassistant": "2024.1.0"
+}
