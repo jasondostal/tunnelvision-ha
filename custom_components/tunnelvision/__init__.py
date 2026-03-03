@@ -1,5 +1,7 @@
 """The TunnelVision integration."""
 
+import asyncio
+import json
 import logging
 from datetime import timedelta
 
@@ -18,7 +20,7 @@ PLATFORMS = ["sensor", "binary_sensor", "button"]
 
 
 class TunnelVisionCoordinator(DataUpdateCoordinator):
-    """Fetch data from TunnelVision API."""
+    """Fetch data from TunnelVision API with SSE for instant updates."""
 
     def __init__(self, hass: HomeAssistant, host: str, port: int, api_key: str):
         super().__init__(
@@ -31,6 +33,7 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
         self.port = port
         self.api_key = api_key
         self.base_url = f"http://{host}:{port}"
+        self._sse_task: asyncio.Task | None = None
 
     @property
     def _headers(self) -> dict:
@@ -94,6 +97,55 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
             ) as resp:
                 return await resp.json()
 
+    def start_sse(self):
+        """Start listening to SSE stream for instant updates."""
+        if self._sse_task is None or self._sse_task.done():
+            self._sse_task = self.hass.async_create_task(self._sse_listener())
+
+    def stop_sse(self):
+        """Stop SSE listener."""
+        if self._sse_task and not self._sse_task.done():
+            self._sse_task.cancel()
+
+    async def _sse_listener(self):
+        """Subscribe to TunnelVision SSE stream, trigger refresh on events."""
+        url = f"{self.base_url}/api/v1/events"
+        retry_delay = 5
+
+        while True:
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(
+                        url,
+                        headers=self._headers,
+                        timeout=aiohttp.ClientTimeout(total=0),  # No timeout for SSE
+                    ) as resp:
+                        if resp.status != 200:
+                            _LOGGER.warning("SSE connection returned %s, falling back to polling", resp.status)
+                            await asyncio.sleep(retry_delay)
+                            continue
+
+                        _LOGGER.info("SSE connected to %s", url)
+                        retry_delay = 5  # Reset on successful connect
+
+                        async for line in resp.content:
+                            decoded = line.decode("utf-8", errors="replace").strip()
+                            if decoded.startswith("data:"):
+                                try:
+                                    data = json.loads(decoded[5:].strip())
+                                    _LOGGER.debug("SSE event received: %s", data.get("state", ""))
+                                    await self.async_request_refresh()
+                                except (json.JSONDecodeError, ValueError):
+                                    pass
+
+            except asyncio.CancelledError:
+                _LOGGER.info("SSE listener stopped")
+                return
+            except Exception as err:
+                _LOGGER.debug("SSE connection error: %s, retrying in %ss", err, retry_delay)
+                await asyncio.sleep(retry_delay)
+                retry_delay = min(retry_delay * 2, 60)  # Exponential backoff, max 60s
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up TunnelVision from a config entry."""
@@ -108,6 +160,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await coordinator.async_config_entry_first_refresh()
     hass.data[DOMAIN][entry.entry_id] = coordinator
+
+    # Start SSE for instant updates (polling is fallback)
+    coordinator.start_sse()
 
     # Register services
     async def handle_vpn_action(call: ServiceCall):
@@ -151,6 +206,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
+    coordinator = hass.data[DOMAIN].get(entry.entry_id)
+    if coordinator:
+        coordinator.stop_sse()
+
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
