@@ -1,112 +1,65 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/jasondostal/tunnelvision/main/images/tunnelvision-logo.svg" alt="TunnelVision" width="128">
-</p>
-
-<p align="center">
-  <strong>TunnelVision for Home Assistant</strong>
+  <img src="images/tunnelvision-readme-banner.png" alt="TunnelVision for Home Assistant" width="800">
 </p>
 
 <p align="center">
   <a href="https://github.com/jasondostal/tunnelvision-ha/releases"><img src="https://img.shields.io/github/v/release/jasondostal/tunnelvision-ha?style=flat-square" alt="Release"></a>
   <a href="https://github.com/hacs/integration"><img src="https://img.shields.io/badge/HACS-Custom-orange?style=flat-square" alt="HACS"></a>
-  <img src="https://img.shields.io/badge/HA-2024.1+-blue?style=flat-square" alt="HA">
+  <img src="https://img.shields.io/badge/HA-2024.1+-41BDF5?style=flat-square&logo=home-assistant" alt="HA">
+  <img src="https://img.shields.io/badge/entities-25-brightgreen?style=flat-square" alt="Entities">
 </p>
 
 ---
 
-Home Assistant integration for [TunnelVision](https://github.com/jasondostal/tunnelvision) — the all-in-one qBittorrent + WireGuard VPN + API container.
+Native Home Assistant integration for [TunnelVision](https://github.com/jasondostal/tunnelvision). 25 entities, config flow, zero YAML.
 
-Monitor your VPN status, control your connection, and automate responses — all from within Home Assistant.
+## Install
 
-## Installation
+**HACS:**
+1. HACS → Integrations → Three dots → Custom Repositories
+2. Add `https://github.com/jasondostal/tunnelvision-ha` → type "Integration"
+3. Search "TunnelVision" → Install → Restart HA
 
-### HACS (Recommended)
-
-1. Open HACS → Integrations → Three dots → Custom Repositories
-2. Add `https://github.com/jasondostal/tunnelvision-ha` as type "Integration"
-3. Search for "TunnelVision" and click Install
-4. Restart Home Assistant
-
-### Manual
-
-Copy `custom_components/tunnelvision/` to your HA `config/custom_components/` directory. Restart HA.
+**Manual:** Copy `custom_components/tunnelvision/` into your HA `custom_components/` directory. Restart HA.
 
 ## Setup
 
-1. Go to **Settings → Devices & Services → Add Integration**
-2. Search for **TunnelVision**
-3. Enter your TunnelVision container's host and port (default: 8081)
-4. Enter your API key (leave blank if `API_KEY` is not set)
-5. Done — entities appear automatically
+**Settings → Integrations → Add → TunnelVision** → enter host + port. Done.
 
-## Entities
+> **Tip:** If HA runs in `network_mode: host`, use your server IP and the mapped port (e.g. `192.168.1.x:8181`). If HA is on the same Docker network, use the container name and internal port (e.g. `tunnelvision:8081`).
 
-### Sensors
+## What You Get
 
-| Entity | Description |
-|--------|-------------|
-| VPN State | `up`, `down`, `disabled` |
-| Public IP | VPN exit IP address |
-| Country | Exit country |
-| City | Exit city |
-| Location | "City, Country" |
-| Download Speed | Current download rate |
-| Upload Speed | Current upload rate |
-| Active Torrents | Number of active torrents |
-| Total Torrents | Total torrent count |
-| Total Downloaded | Cumulative bytes downloaded |
-| Total Uploaded | Cumulative bytes uploaded |
-| VPN Provider | `mullvad`, `custom`, etc. |
+**12 sensors** — VPN state, public IP, country, city, location, download/upload speed, active/total torrents, total downloaded/uploaded, provider
 
-### Binary Sensors
+**4 binary sensors** — VPN connected, killswitch active, healthy, qBittorrent running
 
-| Entity | Description |
-|--------|-------------|
-| VPN Connected | On when VPN is up |
-| Killswitch | On when killswitch is active |
-| Healthy | On when container is healthy |
-| qBittorrent | On when qBit is running |
+**9 buttons** — Restart VPN, rotate server, disconnect, reconnect, restart qBit, pause/resume torrents, enable/disable killswitch
 
-### Buttons
-
-| Entity | Description |
-|--------|-------------|
-| Restart VPN | Restart the VPN tunnel |
-| Rotate Server | Connect to a random new server |
-| Disconnect VPN | Tear down the tunnel |
-| Reconnect VPN | Bring the tunnel back up |
-| Restart qBittorrent | Restart the torrent client |
-| Pause All Torrents | Pause all active torrents |
-| Resume All Torrents | Resume paused torrents |
-| Enable Killswitch | Apply firewall rules |
-| Disable Killswitch | Remove firewall rules |
-
-## Services
+**3 services** — For automations:
 
 ```yaml
-# Restart VPN
 service: tunnelvision.vpn
 data:
-  action: restart  # or: disconnect, reconnect, rotate
+  action: restart  # disconnect, reconnect, rotate
 
-# Control qBittorrent
 service: tunnelvision.qbittorrent
 data:
-  action: restart  # or: pause, resume
+  action: restart  # pause, resume
 
-# Toggle killswitch
 service: tunnelvision.killswitch
 data:
-  action: enable  # or: disable
+  action: enable  # disable
 ```
 
-## Automation Examples
+## Automations
 
-### Notify when VPN drops
+<details>
+<summary>Notify when VPN drops</summary>
 
 ```yaml
 automation:
-  - alias: "TunnelVision VPN Down Alert"
+  - alias: "TunnelVision VPN Down"
     trigger:
       - platform: state
         entity_id: binary_sensor.tunnelvision_vpn_connected
@@ -118,7 +71,10 @@ automation:
           message: "TunnelVision VPN disconnected"
 ```
 
-### Auto-reconnect on VPN drop
+</details>
+
+<details>
+<summary>Auto-reconnect after 1 minute</summary>
 
 ```yaml
 automation:
@@ -134,7 +90,10 @@ automation:
           action: reconnect
 ```
 
-### Rotate server daily
+</details>
+
+<details>
+<summary>Rotate server daily at 4am</summary>
 
 ```yaml
 automation:
@@ -148,9 +107,29 @@ automation:
           action: rotate
 ```
 
-## Also Available
+</details>
 
-TunnelVision also supports **MQTT with auto-discovery** — if you have an MQTT broker, set `MQTT_ENABLED=true` in your TunnelVision container and entities appear in HA automatically without this integration. Use whichever method suits your setup.
+<details>
+<summary>Pause torrents when VPN drops</summary>
+
+```yaml
+automation:
+  - alias: "TunnelVision Pause on VPN Drop"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.tunnelvision_vpn_connected
+        to: "off"
+    action:
+      - service: tunnelvision.qbittorrent
+        data:
+          action: pause
+```
+
+</details>
+
+## MQTT Alternative
+
+TunnelVision also supports **MQTT with auto-discovery**. Set `MQTT_ENABLED=true` in your TunnelVision container and entities appear in HA without this integration. Use whichever method fits your setup — this integration uses direct API polling (every 15s), MQTT provides real-time push.
 
 ## License
 
