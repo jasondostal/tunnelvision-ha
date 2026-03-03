@@ -16,7 +16,7 @@ from .const import DOMAIN, SCAN_INTERVAL_SECONDS
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = ["sensor", "binary_sensor", "button"]
+PLATFORMS = ["sensor", "binary_sensor", "button", "switch"]
 
 
 class TunnelVisionCoordinator(DataUpdateCoordinator):

@@ -27,18 +27,6 @@ BUTTONS = [
         "icon": "mdi:earth-arrow-right",
     },
     {
-        "key": "vpn_disconnect",
-        "name": "Disconnect VPN",
-        "path": "/api/v1/vpn/disconnect",
-        "icon": "mdi:vpn-off",
-    },
-    {
-        "key": "vpn_reconnect",
-        "name": "Reconnect VPN",
-        "path": "/api/v1/vpn/reconnect",
-        "icon": "mdi:connection",
-    },
-    {
         "key": "qbt_restart",
         "name": "Restart qBittorrent",
         "path": "/api/v1/qbt/restart",
@@ -56,18 +44,6 @@ BUTTONS = [
         "name": "Resume All Torrents",
         "path": "/api/v1/qbt/resume",
         "icon": "mdi:play-circle",
-    },
-    {
-        "key": "killswitch_enable",
-        "name": "Enable Killswitch",
-        "path": "/api/v1/killswitch/enable",
-        "icon": "mdi:shield-lock",
-    },
-    {
-        "key": "killswitch_disable",
-        "name": "Disable Killswitch",
-        "path": "/api/v1/killswitch/disable",
-        "icon": "mdi:shield-off",
     },
 ]
 
