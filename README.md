@@ -19,12 +19,20 @@ Native Home Assistant integration for [TunnelVision](https://github.com/jasondos
 
 ## Install
 
-**HACS:**
-1. HACS → Integrations → Three dots → Custom Repositories
-2. Add `https://github.com/jasondostal/tunnelvision-ha` → type "Integration"
-3. Search "TunnelVision" → Install → Restart HA
+### HACS (Recommended)
 
-**Manual:** Copy `custom_components/tunnelvision/` into your HA `custom_components/` directory. Restart HA.
+1. Open Home Assistant → HACS → Integrations
+2. Click the three dots (top right) → **Custom Repositories**
+3. Paste `https://github.com/jasondostal/tunnelvision-ha`
+4. Select category **Integration** → click **Add**
+5. Close the dialog → search for **TunnelVision** in the HACS store
+6. Click **Download** → **Restart Home Assistant**
+
+### Manual
+
+1. Download the [latest release](https://github.com/jasondostal/tunnelvision-ha/releases)
+2. Copy the `custom_components/tunnelvision/` folder into your HA `config/custom_components/` directory
+3. Restart Home Assistant
 
 ## Setup
 
