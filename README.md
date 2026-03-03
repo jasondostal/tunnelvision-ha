@@ -13,6 +13,10 @@
 
 Native Home Assistant integration for [TunnelVision](https://github.com/jasondostal/tunnelvision). 25 entities, config flow, zero YAML.
 
+<p align="center">
+  <img src="images/screenshot-ha.png" alt="TunnelVision Home Assistant Entities" width="400">
+</p>
+
 ## Install
 
 **HACS:**
