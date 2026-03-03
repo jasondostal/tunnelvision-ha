@@ -6,12 +6,12 @@
   <a href="https://github.com/jasondostal/tunnelvision-ha/releases"><img src="https://img.shields.io/github/v/release/jasondostal/tunnelvision-ha?style=flat-square" alt="Release"></a>
   <a href="https://github.com/hacs/integration"><img src="https://img.shields.io/badge/HACS-Custom-orange?style=flat-square" alt="HACS"></a>
   <img src="https://img.shields.io/badge/HA-2024.1+-41BDF5?style=flat-square&logo=home-assistant" alt="HA">
-  <img src="https://img.shields.io/badge/entities-25-brightgreen?style=flat-square" alt="Entities">
+  <img src="https://img.shields.io/badge/entities-23-brightgreen?style=flat-square" alt="Entities">
 </p>
 
 ---
 
-Native Home Assistant integration for [TunnelVision](https://github.com/jasondostal/tunnelvision). 25 entities, config flow, zero YAML.
+Native Home Assistant integration for [TunnelVision](https://github.com/jasondostal/tunnelvision). 23 entities, real-time SSE updates, config flow, zero YAML.
 
 <p align="center">
   <img src="images/screenshot-ha.png" alt="TunnelVision Home Assistant Entities" width="400">
