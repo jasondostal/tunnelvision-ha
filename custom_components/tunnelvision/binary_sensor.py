@@ -40,6 +40,30 @@ BINARY_SENSORS = [
         "icon_on": "mdi:harddisk",
         "icon_off": "mdi:harddisk-remove",
     },
+    {
+        "key": "dns_state",
+        "name": "DNS",
+        "on_value": "running",
+        "device_class": BinarySensorDeviceClass.CONNECTIVITY,
+        "icon_on": "mdi:dns",
+        "icon_off": "mdi:dns-outline",
+    },
+    {
+        "key": "http_proxy_state",
+        "name": "HTTP Proxy",
+        "on_value": "running",
+        "device_class": BinarySensorDeviceClass.CONNECTIVITY,
+        "icon_on": "mdi:web",
+        "icon_off": "mdi:web-off",
+    },
+    {
+        "key": "socks_proxy_state",
+        "name": "SOCKS Proxy",
+        "on_value": "running",
+        "device_class": BinarySensorDeviceClass.CONNECTIVITY,
+        "icon_on": "mdi:sock",
+        "icon_off": "mdi:close-network",
+    },
 ]
 
 
@@ -76,7 +100,7 @@ class TunnelVisionBinarySensor(CoordinatorEntity, BinarySensorEntity):
             "name": "TunnelVision",
             "manufacturer": "TunnelVision",
             "model": "VPN Container",
-            "sw_version": "0.1.0",
+            "sw_version": "0.3.0",
         }
 
     @property

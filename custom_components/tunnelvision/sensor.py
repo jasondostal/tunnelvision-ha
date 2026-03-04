@@ -84,6 +84,26 @@ SENSORS = [
         "name": "VPN Provider",
         "icon": "mdi:shield-account",
     },
+    {
+        "key": "forwarded_port",
+        "name": "Forwarded Port",
+        "icon": "mdi:lan-connect",
+    },
+    {
+        "key": "dns_state",
+        "name": "DNS State",
+        "icon": "mdi:dns",
+    },
+    {
+        "key": "http_proxy_state",
+        "name": "HTTP Proxy State",
+        "icon": "mdi:web",
+    },
+    {
+        "key": "socks_proxy_state",
+        "name": "SOCKS Proxy State",
+        "icon": "mdi:sock",
+    },
 ]
 
 
@@ -122,7 +142,7 @@ class TunnelVisionSensor(CoordinatorEntity, SensorEntity):
             "name": "TunnelVision",
             "manufacturer": "TunnelVision",
             "model": "VPN Container",
-            "sw_version": "0.1.0",
+            "sw_version": "0.3.0",
         }
 
     @property

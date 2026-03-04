@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.3.0 — v2.5.0 Service Support (2026-03-04)
+
+### New Sensors
+- DNS State — shows DNS service status (running/disabled)
+- HTTP Proxy State — shows HTTP CONNECT proxy status
+- SOCKS Proxy State — shows SOCKS5/Shadowsocks proxy status
+- Forwarded Port — shows active port forwarding (PIA/ProtonVPN NAT-PMP)
+
+### New Binary Sensors
+- DNS — connectivity sensor for built-in DNS service
+- HTTP Proxy — connectivity sensor for HTTP CONNECT proxy
+- SOCKS Proxy — connectivity sensor for SOCKS5 proxy
+
+### Entity Count: 30
+- 16 sensors, 7 binary sensors, 5 buttons, 2 switches
+
+### Compatibility
+- Requires TunnelVision v2.5.0+ (new health endpoint fields)
+- Fully backwards-compatible with v2.4.0 (new entities show "disabled" gracefully)
+
+---
+
 ## v0.2.0 — Switches + Real-Time Updates (2026-03-03)
 
 ### Switch Entities

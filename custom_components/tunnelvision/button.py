@@ -79,7 +79,7 @@ class TunnelVisionButton(CoordinatorEntity, ButtonEntity):
             "name": "TunnelVision",
             "manufacturer": "TunnelVision",
             "model": "VPN Container",
-            "sw_version": "0.1.0",
+            "sw_version": "0.3.0",
         }
 
     async def async_press(self) -> None:

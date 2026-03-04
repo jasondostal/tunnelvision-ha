@@ -66,6 +66,9 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
                 "healthy": health.get("healthy", False),
                 "setup_required": health.get("setup_required", False),
                 "uptime_seconds": health.get("uptime_seconds", 0),
+                "dns_state": health.get("dns", "disabled"),
+                "http_proxy_state": health.get("http_proxy", "disabled"),
+                "socks_proxy_state": health.get("socks_proxy", "disabled"),
                 # VPN
                 "vpn_state": vpn.get("state", "unknown"),
                 "public_ip": vpn.get("public_ip", ""),
@@ -76,6 +79,7 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
                 "transfer_rx": vpn.get("transfer_rx", 0),
                 "transfer_tx": vpn.get("transfer_tx", 0),
                 "provider": vpn.get("provider", "custom"),
+                "forwarded_port": vpn.get("forwarded_port"),
                 # qBittorrent
                 "qbt_state": qbt.get("state", "unknown"),
                 "download_speed": qbt.get("download_speed", 0),

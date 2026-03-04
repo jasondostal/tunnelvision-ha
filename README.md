@@ -6,12 +6,12 @@
   <a href="https://github.com/jasondostal/tunnelvision-ha/releases"><img src="https://img.shields.io/github/v/release/jasondostal/tunnelvision-ha?style=flat-square" alt="Release"></a>
   <a href="https://github.com/hacs/integration"><img src="https://img.shields.io/badge/HACS-Custom-orange?style=flat-square" alt="HACS"></a>
   <img src="https://img.shields.io/badge/HA-2024.1+-41BDF5?style=flat-square&logo=home-assistant" alt="HA">
-  <img src="https://img.shields.io/badge/entities-23-brightgreen?style=flat-square" alt="Entities">
+  <img src="https://img.shields.io/badge/entities-30-brightgreen?style=flat-square" alt="Entities">
 </p>
 
 ---
 
-Native Home Assistant integration for [TunnelVision](https://github.com/jasondostal/tunnelvision). 23 entities, real-time SSE updates, config flow, zero YAML.
+Native Home Assistant integration for [TunnelVision](https://github.com/jasondostal/tunnelvision). 30 entities, real-time SSE updates, config flow, zero YAML.
 
 <p align="center">
   <img src="images/screenshot-ha.png" alt="TunnelVision Home Assistant Entities" width="400">
@@ -42,11 +42,13 @@ Native Home Assistant integration for [TunnelVision](https://github.com/jasondos
 
 ## What You Get
 
-**12 sensors** — VPN state, public IP, country, city, location, download/upload speed, active/total torrents, total downloaded/uploaded, provider
+**16 sensors** — VPN state, public IP, country, city, location, download/upload speed, active/total torrents, total downloaded/uploaded, provider, forwarded port, DNS state, HTTP proxy state, SOCKS proxy state
 
-**4 binary sensors** — VPN connected, killswitch active, healthy, qBittorrent running
+**7 binary sensors** — VPN connected, killswitch active, healthy, qBittorrent running, DNS, HTTP proxy, SOCKS proxy
 
-**9 buttons** — Restart VPN, rotate server, disconnect, reconnect, restart qBit, pause/resume torrents, enable/disable killswitch
+**5 buttons** — Restart VPN, rotate server, restart qBit, pause/resume torrents
+
+**2 switches** — VPN on/off, Killswitch on/off (reflect actual state)
 
 **3 services** — For automations:
 
@@ -145,4 +147,4 @@ TunnelVision also supports **MQTT with auto-discovery**. Set `MQTT_ENABLED=true`
 
 ## License
 
-[MIT](LICENSE)
+[GPL-3.0](LICENSE)
