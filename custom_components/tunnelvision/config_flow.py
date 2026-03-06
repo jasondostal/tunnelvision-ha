@@ -2,11 +2,10 @@
 
 import aiohttp
 import voluptuous as vol
-
 from homeassistant import config_entries
-from homeassistant.const import CONF_HOST, CONF_PORT, CONF_API_KEY
+from homeassistant.const import CONF_API_KEY, CONF_HOST, CONF_PORT
 
-from .const import DOMAIN, DEFAULT_PORT
+from .const import DEFAULT_PORT, DOMAIN
 
 
 class TunnelVisionConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -41,7 +40,7 @@ class TunnelVisionConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         elif resp.status != 200:
                             errors["base"] = "cannot_connect"
                         else:
-                            data = await resp.json()
+                            await resp.json()
                             return self.async_create_entry(
                                 title=f"TunnelVision ({host})",
                                 data={

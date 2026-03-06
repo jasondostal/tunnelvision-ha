@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.3.1 — CI & Lint (2026-03-05)
+
+### CI Pipeline
+- GitHub Actions lint workflow: ruff, bandit (high-severity), HACS validation
+- Runs on push/PR to main
+
+### Code Quality
+- Added `pyproject.toml` with ruff + mypy config
+- Fixed import sorting across all modules
+- Fixed exception chaining (`raise ... from err`)
+- Removed unused variable in config flow
+
+---
+
 ## v0.3.0 — v2.5.0 Service Support (2026-03-04)
 
 ### New Sensors

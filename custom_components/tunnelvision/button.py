@@ -2,7 +2,7 @@
 
 import logging
 
-from homeassistant.components.button import ButtonEntity, ButtonDeviceClass
+from homeassistant.components.button import ButtonDeviceClass, ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback

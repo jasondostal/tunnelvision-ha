@@ -6,9 +6,8 @@ import logging
 from datetime import timedelta
 
 import aiohttp
-
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_PORT, CONF_API_KEY
+from homeassistant.const import CONF_API_KEY, CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -89,7 +88,7 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
                 "qbt_version": qbt.get("version", ""),
             }
         except aiohttp.ClientError as err:
-            raise UpdateFailed(f"Cannot connect to TunnelVision: {err}")
+            raise UpdateFailed(f"Cannot connect to TunnelVision: {err}") from err
 
     async def api_post(self, path: str) -> dict:
         """Send a POST command to the API."""
