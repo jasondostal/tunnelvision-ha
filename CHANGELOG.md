@@ -1,5 +1,33 @@
 # Changelog
 
+## v0.4.0 — HA Best Practices + Release Pipeline (2026-03-07)
+
+### Breaking Changes
+- Entity names no longer include "TunnelVision " prefix — HA's `has_entity_name` handles
+  device-scoped naming automatically. Entity IDs are unchanged.
+
+### Improvements
+- **Base entity class** — shared `device_info` and `has_entity_name` across all entity types.
+  Eliminates duplicated device registration code.
+- **Shared HTTP session** — replaced per-call `aiohttp.ClientSession()` with HA's
+  `async_get_clientsession()`. Reuses HA's connection pool, respects HA's SSL config.
+- **EntityCategory.DIAGNOSTIC** — forwarded_port, dns_state, http_proxy_state,
+  socks_proxy_state marked as diagnostic entities (hidden from default dashboards).
+- **services.yaml** — service schemas for `tunnelvision.vpn`, `tunnelvision.qbittorrent`,
+  and `tunnelvision.killswitch`. Enables autocomplete and validation in HA service calls.
+- **Killswitch action validation** — rejects invalid actions with a clear error instead of
+  silently passing to the API.
+- **Service cleanup** — services are unregistered when the last config entry is removed.
+- **Error handling** — `api_post()` checks response status and logs errors.
+
+### CI/CD
+- **Release workflow** — tag `v*` → manifest version check → zip → GitHub Release with
+  auto-generated notes. Manual installs can now download from Releases page.
+- **Mypy type checking** — added to lint workflow.
+- **hacs.json** — `render_readme: true` for HACS store display.
+
+---
+
 ## v0.3.1 — CI & Lint (2026-03-05)
 
 ### CI Pipeline

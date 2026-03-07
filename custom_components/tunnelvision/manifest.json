@@ -7,7 +7,7 @@
   "integration_type": "hub",
   "iot_class": "local_push",
   "requirements": ["aiohttp>=3.8.1"],
-  "version": "0.3.1",
+  "version": "0.4.0",
   "issue_tracker": "https://github.com/jasondostal/tunnelvision-ha/issues",
   "homeassistant": "2024.1.0"
 }
