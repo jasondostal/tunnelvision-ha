@@ -1,5 +1,9 @@
 """Binary sensor platform for TunnelVision."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
@@ -7,10 +11,6 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
-from __future__ import annotations
-
-from typing import Any
 
 from .const import DOMAIN
 from .entity import TunnelVisionEntity
