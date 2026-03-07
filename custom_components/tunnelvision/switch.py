@@ -38,9 +38,9 @@ class TunnelVisionVPNSwitch(TunnelVisionEntity, SwitchEntity):
     _attr_icon = "mdi:vpn"
     _attr_device_class = SwitchDeviceClass.SWITCH
     _attr_name = "VPN"
-    coordinator: "TunnelVisionCoordinator"
+    coordinator: TunnelVisionCoordinator
 
-    def __init__(self, coordinator: "TunnelVisionCoordinator", entry: ConfigEntry):
+    def __init__(self, coordinator: TunnelVisionCoordinator, entry: ConfigEntry):
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry.entry_id}_vpn_switch"
 
@@ -63,9 +63,9 @@ class TunnelVisionKillswitchSwitch(TunnelVisionEntity, SwitchEntity):
     _attr_icon = "mdi:shield-lock"
     _attr_device_class = SwitchDeviceClass.SWITCH
     _attr_name = "Killswitch"
-    coordinator: "TunnelVisionCoordinator"
+    coordinator: TunnelVisionCoordinator
 
-    def __init__(self, coordinator: "TunnelVisionCoordinator", entry: ConfigEntry):
+    def __init__(self, coordinator: TunnelVisionCoordinator, entry: ConfigEntry):
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry.entry_id}_killswitch_switch"
 

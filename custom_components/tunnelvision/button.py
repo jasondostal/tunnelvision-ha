@@ -69,9 +69,9 @@ async def async_setup_entry(
 class TunnelVisionButton(TunnelVisionEntity, ButtonEntity):
     """A TunnelVision action button."""
 
-    coordinator: "TunnelVisionCoordinator"
+    coordinator: TunnelVisionCoordinator
 
-    def __init__(self, coordinator: "TunnelVisionCoordinator", entry: ConfigEntry, description: dict):
+    def __init__(self, coordinator: TunnelVisionCoordinator, entry: ConfigEntry, description: dict):
         super().__init__(coordinator)
         self._path = description["path"]
         self._attr_unique_id = f"{entry.entry_id}_{description['key']}"
