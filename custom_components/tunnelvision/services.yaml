@@ -1,0 +1,44 @@
+vpn:
+  name: VPN Action
+  description: Control the VPN connection.
+  fields:
+    action:
+      name: Action
+      description: The action to perform.
+      required: true
+      selector:
+        select:
+          options:
+            - restart
+            - disconnect
+            - reconnect
+            - rotate
+
+qbittorrent:
+  name: qBittorrent Action
+  description: Control qBittorrent.
+  fields:
+    action:
+      name: Action
+      description: The action to perform.
+      required: true
+      selector:
+        select:
+          options:
+            - restart
+            - pause
+            - resume
+
+killswitch:
+  name: Killswitch Action
+  description: Control the VPN killswitch.
+  fields:
+    action:
+      name: Action
+      description: Enable or disable the killswitch.
+      required: true
+      selector:
+        select:
+          options:
+            - enable
+            - disable

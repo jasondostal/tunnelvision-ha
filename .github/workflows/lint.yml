@@ -18,14 +18,19 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install lint tools
-        run: pip install --quiet ruff bandit
+      - name: Install dependencies
+        run: |
+          pip install --quiet ruff bandit mypy
+          pip install --quiet homeassistant aiohttp
 
       - name: Ruff (lint)
         run: ruff check custom_components/
 
       - name: Bandit (security — high severity)
         run: bandit -r custom_components/ -lll -q
+
+      - name: Mypy (type check)
+        run: mypy custom_components/ --ignore-missing-imports
 
       - name: HACS validation
         uses: hacs/action@main

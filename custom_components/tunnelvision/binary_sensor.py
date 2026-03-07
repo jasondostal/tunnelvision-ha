@@ -7,9 +7,9 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
+from .entity import TunnelVisionEntity
 
 BINARY_SENSORS = [
     {
@@ -82,7 +82,7 @@ async def async_setup_entry(
     )
 
 
-class TunnelVisionBinarySensor(CoordinatorEntity, BinarySensorEntity):
+class TunnelVisionBinarySensor(TunnelVisionEntity, BinarySensorEntity):
     """A TunnelVision binary sensor entity."""
 
     def __init__(self, coordinator, entry: ConfigEntry, description: dict):
@@ -92,19 +92,9 @@ class TunnelVisionBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self._icon_on = description.get("icon_on")
         self._icon_off = description.get("icon_off")
         self._attr_unique_id = f"{entry.entry_id}_{self._key}_binary"
-        self._attr_name = f"TunnelVision {description['name']}"
+        self._attr_name = description["name"]
         if "device_class" in description:
             self._attr_device_class = description["device_class"]
-
-    @property
-    def device_info(self):
-        return {
-            "identifiers": {(DOMAIN, self.coordinator.host)},
-            "name": "TunnelVision",
-            "manufacturer": "TunnelVision",
-            "model": "VPN Container",
-            "sw_version": "0.3.0",
-        }
 
     @property
     def is_on(self):

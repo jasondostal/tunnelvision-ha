@@ -6,12 +6,12 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import UnitOfDataRate, UnitOfInformation
+from homeassistant.const import EntityCategory, UnitOfDataRate, UnitOfInformation
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
+from .entity import TunnelVisionEntity
 
 SENSORS = [
     {
@@ -92,21 +92,25 @@ SENSORS = [
         "key": "forwarded_port",
         "name": "Forwarded Port",
         "icon": "mdi:lan-connect",
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     {
         "key": "dns_state",
         "name": "DNS State",
         "icon": "mdi:dns",
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     {
         "key": "http_proxy_state",
         "name": "HTTP Proxy State",
         "icon": "mdi:web",
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     {
         "key": "socks_proxy_state",
         "name": "SOCKS Proxy State",
         "icon": "mdi:sock",
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
 ]
 
@@ -123,14 +127,14 @@ async def async_setup_entry(
     )
 
 
-class TunnelVisionSensor(CoordinatorEntity, SensorEntity):
+class TunnelVisionSensor(TunnelVisionEntity, SensorEntity):
     """A TunnelVision sensor entity."""
 
     def __init__(self, coordinator, entry: ConfigEntry, description: dict):
         super().__init__(coordinator)
         self._key = description["key"]
         self._attr_unique_id = f"{entry.entry_id}_{self._key}"
-        self._attr_name = f"TunnelVision {description['name']}"
+        self._attr_name = description["name"]
         self._attr_icon = description.get("icon")
         if "device_class" in description:
             self._attr_device_class = description["device_class"]
@@ -138,16 +142,8 @@ class TunnelVisionSensor(CoordinatorEntity, SensorEntity):
             self._attr_native_unit_of_measurement = description["native_unit"]
         if "state_class" in description:
             self._attr_state_class = description["state_class"]
-
-    @property
-    def device_info(self):
-        return {
-            "identifiers": {(DOMAIN, self.coordinator.host)},
-            "name": "TunnelVision",
-            "manufacturer": "TunnelVision",
-            "model": "VPN Container",
-            "sw_version": "0.3.0",
-        }
+        if "entity_category" in description:
+            self._attr_entity_category = description["entity_category"]
 
     @property
     def native_value(self):

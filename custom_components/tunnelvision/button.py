@@ -6,9 +6,9 @@ from homeassistant.components.button import ButtonDeviceClass, ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
+from .entity import TunnelVisionEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,27 +60,17 @@ async def async_setup_entry(
     )
 
 
-class TunnelVisionButton(CoordinatorEntity, ButtonEntity):
+class TunnelVisionButton(TunnelVisionEntity, ButtonEntity):
     """A TunnelVision action button."""
 
     def __init__(self, coordinator, entry: ConfigEntry, description: dict):
         super().__init__(coordinator)
         self._path = description["path"]
         self._attr_unique_id = f"{entry.entry_id}_{description['key']}"
-        self._attr_name = f"TunnelVision {description['name']}"
+        self._attr_name = description["name"]
         self._attr_icon = description.get("icon")
         if "device_class" in description:
             self._attr_device_class = description["device_class"]
-
-    @property
-    def device_info(self):
-        return {
-            "identifiers": {(DOMAIN, self.coordinator.host)},
-            "name": "TunnelVision",
-            "manufacturer": "TunnelVision",
-            "model": "VPN Container",
-            "sw_version": "0.3.0",
-        }
 
     async def async_press(self) -> None:
         """Handle the button press."""

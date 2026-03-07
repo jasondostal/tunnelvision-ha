@@ -9,6 +9,7 @@ import aiohttp
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_API_KEY, CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import DOMAIN, SCAN_INTERVAL_SECONDS
@@ -33,6 +34,7 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
         self.api_key = api_key
         self.base_url = f"http://{host}:{port}"
         self._sse_task: asyncio.Task | None = None
+        self._session = async_get_clientsession(hass)
 
     @property
     def _headers(self) -> dict:
@@ -43,15 +45,14 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
 
     async def _fetch(self, path: str) -> dict:
         """Fetch a single API endpoint."""
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                f"{self.base_url}{path}",
-                headers=self._headers,
-                timeout=aiohttp.ClientTimeout(total=10),
-            ) as resp:
-                if resp.status != 200:
-                    raise UpdateFailed(f"API returned {resp.status} for {path}")
-                return await resp.json()
+        async with self._session.get(
+            f"{self.base_url}{path}",
+            headers=self._headers,
+            timeout=aiohttp.ClientTimeout(total=10),
+        ) as resp:
+            if resp.status != 200:
+                raise UpdateFailed(f"API returned {resp.status} for {path}")
+            return await resp.json()
 
     async def _async_update_data(self) -> dict:
         """Fetch all endpoints and merge into one dict."""
@@ -90,15 +91,17 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
         except aiohttp.ClientError as err:
             raise UpdateFailed(f"Cannot connect to TunnelVision: {err}") from err
 
-    async def api_post(self, path: str) -> dict:
+    async def api_post(self, path: str) -> dict | None:
         """Send a POST command to the API."""
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                f"{self.base_url}{path}",
-                headers=self._headers,
-                timeout=aiohttp.ClientTimeout(total=30),
-            ) as resp:
-                return await resp.json()
+        async with self._session.post(
+            f"{self.base_url}{path}",
+            headers=self._headers,
+            timeout=aiohttp.ClientTimeout(total=30),
+        ) as resp:
+            if resp.status >= 400:
+                _LOGGER.error("API call failed: %s %s", resp.status, await resp.text())
+                return None
+            return await resp.json()
 
     def start_sse(self):
         """Start listening to SSE stream for instant updates."""
@@ -117,12 +120,11 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
 
         while True:
             try:
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(
-                        url,
-                        headers=self._headers,
-                        timeout=aiohttp.ClientTimeout(total=0),  # No timeout for SSE
-                    ) as resp:
+                async with self._session.get(
+                    url,
+                    headers=self._headers,
+                    timeout=aiohttp.ClientTimeout(total=0),  # No timeout for SSE
+                ) as resp:
                         if resp.status != 200:
                             _LOGGER.warning("SSE connection returned %s, falling back to polling", resp.status)
                             await asyncio.sleep(retry_delay)
@@ -195,6 +197,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def handle_killswitch(call: ServiceCall):
         action = call.data.get("action", "enable")
+        if action not in ("enable", "disable"):
+            _LOGGER.error("Invalid killswitch action: %s", action)
+            return
         path = f"/api/v1/killswitch/{action}"
         await coordinator.api_post(path)
         await coordinator.async_request_refresh()
@@ -216,4 +221,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
+        # Unregister services when last entry is removed
+        if not hass.data[DOMAIN]:
+            hass.services.async_remove(DOMAIN, "vpn")
+            hass.services.async_remove(DOMAIN, "qbittorrent")
+            hass.services.async_remove(DOMAIN, "killswitch")
     return unload_ok
