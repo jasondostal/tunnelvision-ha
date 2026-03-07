@@ -8,6 +8,10 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from __future__ import annotations
+
+from typing import Any
+
 from .const import DOMAIN
 from .entity import TunnelVisionEntity
 
@@ -85,7 +89,7 @@ async def async_setup_entry(
 class TunnelVisionBinarySensor(TunnelVisionEntity, BinarySensorEntity):
     """A TunnelVision binary sensor entity."""
 
-    def __init__(self, coordinator, entry: ConfigEntry, description: dict):
+    def __init__(self, coordinator: Any, entry: ConfigEntry, description: dict[str, Any]):
         super().__init__(coordinator)
         self._key = description["key"]
         self._on_value = description["on_value"]

@@ -1,6 +1,9 @@
 """Button platform for TunnelVision."""
 
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from homeassistant.components.button import ButtonDeviceClass, ButtonEntity
 from homeassistant.config_entries import ConfigEntry
@@ -9,6 +12,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .entity import TunnelVisionEntity
+
+if TYPE_CHECKING:
+    from . import TunnelVisionCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -63,7 +69,9 @@ async def async_setup_entry(
 class TunnelVisionButton(TunnelVisionEntity, ButtonEntity):
     """A TunnelVision action button."""
 
-    def __init__(self, coordinator, entry: ConfigEntry, description: dict):
+    coordinator: "TunnelVisionCoordinator"
+
+    def __init__(self, coordinator: "TunnelVisionCoordinator", entry: ConfigEntry, description: dict):
         super().__init__(coordinator)
         self._path = description["path"]
         self._attr_unique_id = f"{entry.entry_id}_{description['key']}"

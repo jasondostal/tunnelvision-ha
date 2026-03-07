@@ -1,6 +1,9 @@
 """Switch platform for TunnelVision — toggleable state entities."""
 
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.config_entries import ConfigEntry
@@ -9,6 +12,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .entity import TunnelVisionEntity
+
+if TYPE_CHECKING:
+    from . import TunnelVisionCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,8 +38,9 @@ class TunnelVisionVPNSwitch(TunnelVisionEntity, SwitchEntity):
     _attr_icon = "mdi:vpn"
     _attr_device_class = SwitchDeviceClass.SWITCH
     _attr_name = "VPN"
+    coordinator: "TunnelVisionCoordinator"
 
-    def __init__(self, coordinator, entry: ConfigEntry):
+    def __init__(self, coordinator: "TunnelVisionCoordinator", entry: ConfigEntry):
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry.entry_id}_vpn_switch"
 
@@ -56,8 +63,9 @@ class TunnelVisionKillswitchSwitch(TunnelVisionEntity, SwitchEntity):
     _attr_icon = "mdi:shield-lock"
     _attr_device_class = SwitchDeviceClass.SWITCH
     _attr_name = "Killswitch"
+    coordinator: "TunnelVisionCoordinator"
 
-    def __init__(self, coordinator, entry: ConfigEntry):
+    def __init__(self, coordinator: "TunnelVisionCoordinator", entry: ConfigEntry):
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry.entry_id}_killswitch_switch"
 
