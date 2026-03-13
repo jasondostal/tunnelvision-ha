@@ -6,12 +6,12 @@
   <a href="https://github.com/jasondostal/tunnelvision-ha/releases"><img src="https://img.shields.io/github/v/release/jasondostal/tunnelvision-ha?style=flat-square" alt="Release"></a>
   <a href="https://github.com/hacs/integration"><img src="https://img.shields.io/badge/HACS-Custom-orange?style=flat-square" alt="HACS"></a>
   <img src="https://img.shields.io/badge/HA-2024.1+-41BDF5?style=flat-square&logo=home-assistant" alt="HA">
-  <img src="https://img.shields.io/badge/entities-30-brightgreen?style=flat-square" alt="Entities">
+  <img src="https://img.shields.io/badge/entities-33-brightgreen?style=flat-square" alt="Entities">
 </p>
 
 ---
 
-Native Home Assistant integration for [TunnelVision](https://github.com/jasondostal/tunnelvision). 30 entities, real-time SSE updates, config flow, zero YAML.
+Native Home Assistant integration for [TunnelVision](https://github.com/jasondostal/tunnelvision). 33 entities, real-time SSE updates, HTTPS support, config flow, zero YAML.
 
 <p align="center">
   <img src="images/screenshot-ha.png" alt="TunnelVision Home Assistant Entities" width="400">
@@ -37,6 +37,8 @@ Native Home Assistant integration for [TunnelVision](https://github.com/jasondos
 ## Setup
 
 **Settings → Integrations → Add → TunnelVision** → enter host + port. Done.
+
+If TunnelVision is behind a reverse proxy with TLS, check **Use HTTPS** and optionally uncheck **Verify SSL certificate** for self-signed certs.
 
 > **Tip:** If HA runs in `network_mode: host`, use your server IP and the mapped port (e.g. `192.168.1.x:8181`). If HA is on the same Docker network, use the container name and internal port (e.g. `tunnelvision:8081`).
 

@@ -7,13 +7,16 @@
         "data": {
           "host": "Host",
           "port": "Port",
-          "api_key": "API Key (leave blank if not set)"
+          "api_key": "API Key (leave blank if not set)",
+          "use_ssl": "Use HTTPS",
+          "verify_ssl": "Verify SSL certificate"
         }
       }
     },
     "error": {
       "cannot_connect": "Cannot connect to TunnelVision API",
-      "invalid_auth": "Invalid API key"
+      "invalid_auth": "Invalid API key",
+      "invalid_port": "Port must be between 1 and 65535"
     },
     "abort": {
       "already_configured": "This TunnelVision instance is already configured"

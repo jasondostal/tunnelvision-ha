@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.5.0 — HTTPS Support + Security Hardening (2026-03-12)
+
+### Security
+- **HTTPS support** — config flow now offers "Use HTTPS" and "Verify SSL certificate"
+  options. All API requests (fetch, POST, and SSE) pass the SSL context. Self-signed
+  certs supported by unchecking verify.
+- **Port validation** — config flow enforces 1–65535 range via `vol.Range`.
+- **Input sanitization** — host and API key inputs are stripped of whitespace.
+
+### Migration
+- Config entry version bumped to 2. Existing v1 entries are automatically migrated
+  with `use_ssl=false` and `verify_ssl=true` (no action required).
+
+### Entity Count: 33
+- 16 sensors, 7 binary sensors, 7 buttons, 2 switches, 1 number (unchanged)
+
+---
+
 ## v0.4.0 — HA Best Practices + Release Pipeline (2026-03-07)
 
 ### Breaking Changes

@@ -3,6 +3,7 @@
 import asyncio
 import json
 import logging
+import ssl
 from datetime import timedelta
 
 import aiohttp
@@ -12,7 +13,7 @@ from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DOMAIN, SCAN_INTERVAL_SECONDS
+from .const import CONF_USE_SSL, CONF_VERIFY_SSL, DOMAIN, SCAN_INTERVAL_SECONDS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,7 +23,15 @@ PLATFORMS = ["sensor", "binary_sensor", "button", "switch"]
 class TunnelVisionCoordinator(DataUpdateCoordinator):
     """Fetch data from TunnelVision API with SSE for instant updates."""
 
-    def __init__(self, hass: HomeAssistant, host: str, port: int, api_key: str):
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        host: str,
+        port: int,
+        api_key: str,
+        use_ssl: bool = False,
+        verify_ssl: bool = True,
+    ):
         super().__init__(
             hass,
             _LOGGER,
@@ -32,7 +41,11 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
         self.host = host
         self.port = port
         self.api_key = api_key
-        self.base_url = f"http://{host}:{port}"
+        scheme = "https" if use_ssl else "http"
+        self.base_url = f"{scheme}://{host}:{port}"
+        self._ssl_context: ssl.SSLContext | bool | None = None
+        if use_ssl and not verify_ssl:
+            self._ssl_context = False
         self._sse_task: asyncio.Task | None = None
         self._session = async_get_clientsession(hass)
 
@@ -49,6 +62,7 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
             f"{self.base_url}{path}",
             headers=self._headers,
             timeout=aiohttp.ClientTimeout(total=10),
+            ssl=self._ssl_context,
         ) as resp:
             if resp.status != 200:
                 raise UpdateFailed(f"API returned {resp.status} for {path}")
@@ -97,6 +111,7 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
             f"{self.base_url}{path}",
             headers=self._headers,
             timeout=aiohttp.ClientTimeout(total=30),
+            ssl=self._ssl_context,
         ) as resp:
             if resp.status >= 400:
                 _LOGGER.error("API call failed: %s %s", resp.status, await resp.text())
@@ -124,6 +139,7 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
                     url,
                     headers=self._headers,
                     timeout=aiohttp.ClientTimeout(total=0),  # No timeout for SSE
+                    ssl=self._ssl_context,
                 ) as resp:
                         if resp.status != 200:
                             _LOGGER.warning("SSE connection returned %s, falling back to polling", resp.status)
@@ -152,6 +168,17 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
                 retry_delay = min(retry_delay * 2, 60)  # Exponential backoff, max 60s
 
 
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Migrate config entries to newer versions."""
+    if entry.version < 2:
+        _LOGGER.info("Migrating TunnelVision config entry from version %s to 2", entry.version)
+        new_data = {**entry.data}
+        new_data.setdefault(CONF_USE_SSL, False)
+        new_data.setdefault(CONF_VERIFY_SSL, True)
+        hass.config_entries.async_update_entry(entry, data=new_data, version=2)
+    return True
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up TunnelVision from a config entry."""
     hass.data.setdefault(DOMAIN, {})
@@ -161,6 +188,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         host=entry.data[CONF_HOST],
         port=entry.data[CONF_PORT],
         api_key=entry.data.get(CONF_API_KEY, ""),
+        use_ssl=entry.data.get(CONF_USE_SSL, False),
+        verify_ssl=entry.data.get(CONF_VERIFY_SSL, True),
     )
 
     await coordinator.async_config_entry_first_refresh()
