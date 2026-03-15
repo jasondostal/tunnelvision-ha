@@ -195,8 +195,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await coordinator.async_config_entry_first_refresh()
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
-    # Start SSE for instant updates (polling is fallback)
-    coordinator.start_sse()
+    # Start SSE after HA is fully started (avoids blocking startup phase)
+    async def _start_sse_when_ready(event=None):
+        coordinator.start_sse()
+
+    hass.bus.async_listen_once("homeassistant_started", _start_sse_when_ready)
 
     # Register services
     async def handle_vpn_action(call: ServiceCall):

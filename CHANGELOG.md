@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.5.1 — Fix SSE blocking HA startup (2026-03-15)
+
+### Bug Fix
+- **SSE listener no longer blocks Home Assistant startup** — the SSE connection to
+  TunnelVision's `/api/v1/events` stream used an infinite timeout and was started
+  during `async_setup_entry`, which prevented HA from completing its startup phase
+  for up to 5 minutes. The listener now defers to the `homeassistant_started` event.
+  Polling fallback remains unaffected.
+
+---
+
 ## v0.5.0 — HTTPS Support + Security Hardening (2026-03-12)
 
 ### Security
