@@ -10,7 +10,7 @@ from homeassistant.const import CONF_API_KEY, CONF_HOST, CONF_PORT
 from .const import CONF_USE_SSL, CONF_VERIFY_SSL, DEFAULT_PORT, DOMAIN
 
 
-class TunnelVisionConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class TunnelVisionConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]
     """Handle a config flow for TunnelVision."""
 
     VERSION = 2
