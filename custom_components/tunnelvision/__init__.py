@@ -43,7 +43,7 @@ class TunnelVisionCoordinator(DataUpdateCoordinator):
         self.api_key = api_key
         scheme = "https" if use_ssl else "http"
         self.base_url = f"{scheme}://{host}:{port}"
-        self._ssl_context: ssl.SSLContext | bool | None = None
+        self._ssl_context: ssl.SSLContext | bool = True
         if use_ssl and not verify_ssl:
             self._ssl_context = False
         self._sse_task: asyncio.Task | None = None

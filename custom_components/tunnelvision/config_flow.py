@@ -41,7 +41,7 @@ class TunnelVisionConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type:
                     if api_key:
                         headers["X-API-Key"] = api_key
 
-                    ssl_context: ssl.SSLContext | bool | None = None
+                    ssl_context: ssl.SSLContext | bool = True
                     if use_ssl and not verify_ssl:
                         ssl_context = False  # aiohttp: False = skip verification
 
